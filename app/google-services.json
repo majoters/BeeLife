@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "235841771079",
+    "firebase_url": "https://beebackend.firebaseio.com",
+    "project_id": "beebackend",
+    "storage_bucket": "beebackend.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235841771079:android:3c2e3f82c5faa4db",
+        "android_client_info": {
+          "package_name": "com.project.kmitl57.beelife"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235841771079-rmtm9lirrropfq77t8s47u9r26v0i01t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.kmitl57.beelife",
+            "certificate_hash": "d1b0d006175aef155e4dc12308daf4a689777cd0"
+          }
+        },
+        {
+          "client_id": "235841771079-dk76ccjavcsh8laa5vs3gmnalbfl09ed.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE2IOteQRqgNdUL10IZVzdshKfGrwK_4s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235841771079-dk76ccjavcsh8laa5vs3gmnalbfl09ed.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
