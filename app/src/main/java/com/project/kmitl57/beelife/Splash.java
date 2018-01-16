@@ -9,9 +9,9 @@ import android.view.Window;
 public class Splash extends Activity {
 	Handler handler;
 	Runnable runnable;
-	Long delay_time;
-	Long time = 3000L;
-	
+	long delay_time;
+	long time = 3000L;
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -32,11 +32,13 @@ public class Splash extends Activity {
 		delay_time = time;
 	    handler.postDelayed(runnable, delay_time);
 	    time = System.currentTimeMillis();
+
 	}
 	
 	public void onStop() {
 		super.onStop();
 		handler.removeCallbacks(runnable);
 	    time = delay_time - (System.currentTimeMillis() - time);
+
 	}
 }

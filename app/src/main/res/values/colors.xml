@@ -7,7 +7,10 @@
     <color name="primary_dark">#E12929</color>
     <color name="primary_darker">#CC1D1D</color>
     <color name="accent">#ffffff</color>
-
+    <color name="calendar">#ffd700</color>
+    <color name="calendarBackground">#cccccc</color>
+    <color name="activityTime">#d62d20</color>
+    <color name="fab_create_activity">#ffbd05</color>
     <color name="black">#000000</color>
     <color name="jet">#222222</color>
     <color name="oil">#333333</color>
@@ -16,7 +19,7 @@
     <color name="aluminum">#999999</color>
     <color name="base">#AAAAAA</color>
     <color name="iron">#cccccc</color>
-	<color name="colorBackground">#eeeeee</color>
+    <color name="colorBackground">#eeeeee</color>
 
     <color name="bg_login">#26ae90</color>
     <color name="bg_register">#2e3237</color>

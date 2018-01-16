@@ -1,10 +1,12 @@
 package devs.mulham.raee.sample;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,14 +31,19 @@ import devs.mulham.horizontalcalendar.HorizontalCalendarListener;
 public class MainActivity4 extends AppCompatActivity {
 
     private HorizontalCalendar horizontalCalendar;
-    ListView listView ;
+    private ActivityDbAdapter mDbAdapter;
+    public static ActivityDbAdapter mDbAdabter_Model;
+    public static ListView listView ;
     public static String a = new String();
-    static ArrayList<String> values = new ArrayList<>();
-    static ArrayList<String> values_filter = new ArrayList<>();
+    public static ArrayList<String> ActivityName = new ArrayList<>();
+    public static ArrayList<String> ActivityTime = new ArrayList<>();
+    public static ArrayList<String> ActivityLocation = new ArrayList<>();
+    static ArrayList<List_Database> values_filter = new ArrayList<>();
     static ArrayList<List_Database> databases = new ArrayList<>();
-    public  static Date listdate ;
+    public  static int listdate ;
     public static Address location=null;
     static int id_date=0;
+    TextView txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +53,7 @@ public class MainActivity4 extends AppCompatActivity {
         setSupportActionBar(toolbar);
         listView = (ListView) findViewById(R.id.list);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        final ArrayList<String> a = new ArrayList<>();
+        txt=(TextView)findViewById(R.id.textView6);
         /** end after 2 months from now */
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.MONTH, 12);
@@ -59,8 +66,13 @@ public class MainActivity4 extends AppCompatActivity {
         defaultDate.add(Calendar.MONTH, -1);
         defaultDate.add(Calendar.DAY_OF_WEEK, +5);
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values_filter);
+        final CustomListView adapter = new CustomListView(getApplicationContext(),ActivityTime,ActivityName,ActivityLocation);
         listView.setAdapter(adapter);
+
+        //Create Database
+        mDbAdapter = new ActivityDbAdapter(getApplicationContext());
+        mDbAdapter.open();
+        mDbAdabter_Model=mDbAdapter;
 
         horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
                 .startDate(startDate.getTime())
@@ -79,63 +91,109 @@ public class MainActivity4 extends AppCompatActivity {
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Date date, int position) {
-                Toast.makeText(MainActivity4.this, DateFormat.getDateInstance().format(date) + " is selected!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity4.this, DateFormat.getDateInstance().format(date) + " is selected!", Toast.LENGTH_SHORT).show();
                 Log.d("Selected Item: ", DateFormat.getDateInstance().format(date));
-                listdate=horizontalCalendar.getSelectedDate();
+                listdate=date.getDate()*10000+(date.getMonth()+1)*100+ date.getYear()%100;
                 values_filter.clear();
-                int key= MainActivity4.listdate.getDate()*10000+(MainActivity4.listdate.getMonth()+1)*100+ MainActivity4.listdate.getYear()%100;
-                for(int i=0;i<databases.size();i++){
-                    for(int j=i+1;j<databases.size();j++){
-                        if(databases.get(i).getTime()>databases.get(j).getTime()&&i!=j){
-                            int swap = databases.get(i).getTime();
-                            String swap2 = values.get(i);
-                            databases.get(i).setTime(databases.get(j).getTime());
-                            databases.get(j).setTime(swap);
-                            values.set(i,values.get(j));
-                            values.set(j,swap2);
+                ActivityLocation.clear();
+                ActivityName.clear();
+                ActivityTime.clear();
+                adapter.notifyDataSetChanged();
 
+                if(mDbAdapter.fecthAllList()!=null){
+                    databases=mDbAdapter.fecthAllList();
+                }
+
+                for(int i=0;i<databases.size();i++){
+                    if(databases.get(i).getDate()==listdate){
+                        values_filter.add(databases.get(i));
+                    }
+                }
+
+                for(int i=0;i<values_filter.size();i++){
+                    for(int j=0;j<values_filter.size()-1;j++){
+                        if(values_filter.get(j).getTime()>values_filter.get(j+1).getTime()){
+                            List_Database swap=values_filter.get(j);
+                            values_filter.set(j,values_filter.get(j+1));
+                            values_filter.set(j+1,swap);
                         }
                     }
                 }
-                for(int i=0; i < values.size();i++){
-                    if(databases.get(i).getID()== key){
-                        values_filter.add(values.get(i));
-                        id_date=databases.get(i).getID();
-                    }
-                }
 
-                adapter.notifyDataSetChanged();
+                for(int i=0;i<values_filter.size();i++){
+                    String time="";
+                    if(values_filter.get(i).getTime()/100<10)
+                        time+="0"+String.valueOf(values_filter.get(i).getTime()/100)+":";
+                    else
+                        time+=String.valueOf(values_filter.get(i).getTime()/100)+":";
+                    if(values_filter.get(i).getTime()%100<10)
+                        time+="0"+String.valueOf(values_filter.get(i).getTime()%100);
+                    else
+                        time+=String.valueOf(values_filter.get(i).getTime()%100);
+                    ActivityTime.add(time);
+                    ActivityName.add(values_filter.get(i).getDescription());
+                    ActivityLocation.add(values_filter.get(i).getLocationName());
+                }
+                final CustomListView adapter = new CustomListView(getApplicationContext(),ActivityTime,ActivityName,ActivityLocation);
+                listView.setAdapter(adapter);
+
             }
         });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                horizontalCalendar.goToday(true);
-                //values.add(0,horizontalCalendar.getSelectedDate().toString());
-               // Intent map =new Intent(MainActivity4.this,MapsActivity.class);
-                //MainActivity4.this.startActivity(map);
                 CustomDialogClass cdd = new CustomDialogClass(MainActivity4.this);
                 cdd.show();
 
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                mDbAdapter.DeleteList(mDbAdapter.ListToID(values_filter.get(position)));
+                                //mDbAdabter_Model.DeleteList();
+                                txt.setText(String.valueOf(mDbAdapter.NumberOfList()));
+                                Toast.makeText(getApplicationContext(),String.valueOf(values_filter.get(position)
+                                        .getDescription()),Toast.LENGTH_LONG).show();
+                                databases.remove(SearchIndex(values_filter.get(position)));
+                                values_filter.remove(position);
+                                ActivityLocation.remove(position);
+                                ActivityName.remove(position);
+                                ActivityTime.remove(position);
+                                final CustomListView adapter = new CustomListView(getApplicationContext(),ActivityTime,ActivityName,ActivityLocation);
+                                listView.setAdapter(adapter);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //Do your No progress
+                                break;
+                        }
+                    }
+                };
+                AlertDialog.Builder ab = new AlertDialog.Builder(MainActivity4.this);
+                ab.setMessage("Are you sure to delete?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+                return true;
+            }
+        });
+
        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               //Intent a = new Intent(MainActivity4.this,MapsActivity.class);
-               //MainActivity4.this.startActivity(a);
-               TextView txt6 = (TextView)findViewById(R.id.textView6);
-               List_Database dataset=null ;
-               int Time=0,Time2=0,J=0;
-               int mul=100;
-               for(int k=0;k<3;J++){
-                   if(values_filter.get(i).charAt(J)==':'){
-                       k++;
-                   }
-               }
-               txt6.setText(values_filter.get(i).charAt(J));
+               /*TextView txt6 = (TextView)findViewById(R.id.textView6);
+               txt6.setText(ActivityTime.get(0));
+               /*CustomDialogClass cdd = new CustomDialogClass(MainActivity4.this,values_filter.get(i),i);
+               cdd.show();*/
+               ShowActivity cdd = new ShowActivity(MainActivity4.this,values_filter.get(i),i);
+               cdd.show();
 
            }
        });
@@ -168,6 +226,14 @@ public class MainActivity4 extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public int SearchIndex(List_Database list_database){
+        for(int i=0;i<MainActivity4.databases.size();i++){
+            if(list_database==MainActivity4.databases.get(i))
+                return i;
+        }
+        return -1;
     }
 
 }

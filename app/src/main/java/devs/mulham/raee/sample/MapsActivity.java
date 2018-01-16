@@ -25,7 +25,7 @@ import com.project.kmitl57.beelife.R;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    static String Search;
+    public static String Search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +73,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             list = geocoder.getFromLocationName(Search, 1);
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (IndexOutOfBoundsException e){
+            try {
+                list = geocoder.getFromLocationName("H",1);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
-        Address address = list.get(0);
-        MainActivity4.location=address;
-        mMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(),address.getLongitude())));
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(address.getLatitude(),address.getLongitude())));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(),address.getLongitude()),15f));
 
+        //Mark from Datalist from search
+        if(list.size()>0){
+            Address address = list.get(0);
+            MainActivity4.location=address;
+            mMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(),address.getLongitude())));
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(address.getLatitude(),address.getLongitude())));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(),address.getLongitude()),15f));
+        }
+        else {
+            try {
+                list = geocoder.getFromLocationName("H",1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 

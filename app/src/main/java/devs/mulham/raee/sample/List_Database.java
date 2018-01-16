@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class List_Database {
 
-    private int ID;
+    private int Date;
     private int Time ;
     private String Description;
     private String locationName;
@@ -24,8 +24,8 @@ public class List_Database {
         this.locationName = locationName;
     }
 
-    public List_Database(int ID,int Time,String Description,Address location,String locationName){
-        this.ID=ID;
+    public List_Database(int Date,int Time,String Description,Address location,String locationName){
+        this.Date=Date;
         this.Time=Time;
         this.Description=Description;
         this.location=location;
@@ -33,9 +33,9 @@ public class List_Database {
     }
 
 
-    public int getID(){return ID;}
+    public int getDate(){return Date;}
 
-    public void setID(int id){ID = id;}
+    public void setDate(int Date){this.Date = Date;}
 
     public int getTime() {
         return Time;
